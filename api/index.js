@@ -3,15 +3,15 @@ export default async function handler(req, res) {
 
   const LAGU = {
     "1": {
-      judul: "1. Dua Hati 1 Jalan - ZONY MUSIK",
+      judul: "1.Dua Hati 1 Jalan - ZONY MUSIK",
       file_id: "CQACAgUAAxkBAAMlavzBkls0eShqWb9IVljzQ2lfUUEAApsfAAI2julX8KsdahucYDE9BA"
     },
     "2": {
-      judul: "2. Dua Nama 1 Hati - ZONY MUSIK",
+      judul: "2.Dua Nama 1 Hati - ZONY MUSIK",
       file_id: "CQACAgUAAxkBAAMmavzBktCBmgGMa7wH_K4a9Ehl12sAApwfAAI2julXxj dkBBj0cSg9BA"
     },
     "3": {
-      judul: "3. Rabb yang Maha Pencipta - ZONY MUSIK",
+      judul: "3.Rabb yang Maha Pencipta - ZONY MUSIK",
       file_id: "CQACAgUAAxkBAAMnavzBkklQOJ65QiuWWBE7NAStHvEAAp0fAAI2julX_3wjdzEFKSo9BA"
     }
   };
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: "Lagu gak ketemu 😅\n\nCoba ketik:\n1 / Dua Hati 1 Jalan\n2 / Dua Nama 1 Hati\n3 / Rabb yang Maha Pencipta" })
+          body: JSON.stringify({ chat_id: chatId, text: "Lagu gak ketemu 😎\n\nCoba ketik:\n1 / Dua Hati 1 Jalan\n2 / Dua Nama 1 Hati\n3 / Rabb yang Maha Pencipta" })
         });
       }
     }

@@ -1,34 +1,61 @@
 export default async function handler(req, res) {
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+
+  const LAGU = {
+    "1": {
+      judul: "1. Dua Hati 1 Jalan - ZONY MUSIK",
+      file_id: "CQACAgUAAxkBAAMlavzBkls0eShqWb9IVljzQ2lfUUEAApsfAAI2julX8KsdahucYDE9BA"
+    },
+    "2": {
+      judul: "2. Dua Nama 1 Hati - ZONY MUSIK",
+      file_id: "CQACAgUAAxkBAAMmavzBktCBmgGMa7wH_K4a9Ehl12sAApwfAAI2julXxj dkBBj0cSg9BA"
+    },
+    "3": {
+      judul: "3. Rabb yang Maha Pencipta - ZONY MUSIK",
+      file_id: "CQACAgUAAxkBAAMnavzBkklQOJ65QiuWWBE7NAStHvEAAp0fAAI2julX_3wjdzEFKSo9BA"
+    }
+  };
+
   if (req.method === 'POST') {
-    const update = req.body;
-    const msg = update.message;
+    const msg = req.body.message;
     const chatId = msg?.chat?.id;
 
-    if (chatId && msg) {
-      let reply = "";
+    if (chatId && msg?.text) {
+      const text = msg.text.toLowerCase();
+      let file_id = "";
+      let judul = "";
 
-      // Kalo yang dikirim LAGU / AUDIO
-      if (msg.audio || msg.document) {
-        const file = msg.audio || msg.document;
-        const nama = file.file_name || file.title || "lagu";
-        reply = `Lagu kesimpen! ✅\n\nNama: ${nama}\nFILE_ID:\n${file.file_id}\n\nScreenshot ini kirim ke aku!`;
-      }
-      // Kalo yang dikirim TULISAN
-      else if (msg.text) {
-        const text = msg.text;
-        if (text === '/start') {
-          reply = "Halo! Selamat datang di Gudang Lagu Ku! 🎵\n\nKetik nama lagu yang mau kamu cari.\n\n1. Dua Hati 1 Jalan\n2. Dua Nama 1 Hati\n3. Rabb yang Maha Pencipta";
-        } else {
-          reply = "Halo! Bot udah jalan! 🎉";
-        }
-      }
-
-      if (reply) {
+      if (text === '/start') {
         await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chatId, text: reply })
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: "Halo! Selamat datang di Gudang Lagu Ku! 🎵\n\nKetik angka / judul lagunya:\n\n1. Dua Hati 1 Jalan\n2. Dua Nama 1 Hati\n3. Rabb yang Maha Pencipta"
+          })
+        });
+        return res.status(200).json({ ok: true });
+      }
+
+      if (text.includes("dua hati") || text === "1") {
+        file_id = LAGU["1"].file_id; judul = LAGU["1"].judul;
+      } else if (text.includes("dua nama") || text === "2") {
+        file_id = LAGU["2"].file_id; judul = LAGU["2"].judul;
+      } else if (text.includes("rabb") || text.includes("pencipta") || text === "3") {
+        file_id = LAGU["3"].file_id; judul = LAGU["3"].judul;
+      }
+
+      if (file_id) {
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendAudio`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, audio: file_id, caption: "🎵 " + judul + "\n\nTerima kasih sudah mendengarkan!" })
+        });
+      } else {
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text: "Lagu gak ketemu 😅\n\nCoba ketik:\n1 / Dua Hati 1 Jalan\n2 / Dua Nama 1 Hati\n3 / Rabb yang Maha Pencipta" })
         });
       }
     }
